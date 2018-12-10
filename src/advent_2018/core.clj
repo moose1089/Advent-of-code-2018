@@ -60,7 +60,7 @@
   (loop  [marble 0
           m nil]
     (when (zero? (mod marble 100000))
-      (println "progress" (/ marble max-marble)))
+      (println "progress" (format "%.0f%%" (float (* 100 (/ marble max-marble))))))
     (if (> marble max-marble)
       m
       (recur (inc marble) (insert-marble m marble (mod marble players))))))
@@ -68,28 +68,16 @@
 (defn max-points [m]
   (apply max (vals (:scores m))))
 
-(play-upto 1 23)
-
-(max-points (play-upto 30 5807))
-
-#_(-> (insert-marble nil 0 0)
-    (insert-marble 1 0)
-    (insert-marble 2 0)
-    (insert-marble 3 0))
-
-
-
 (defn f9 [args]
   (println "maxpoints="
    (max-points (apply play-upto (map #(Integer/parseInt %) args)))))
-
 
 (defn -main
   "I don't do a whole lot ... yet."
   [h & args]
 
 
-  (time (f9 ["411" "7117"]))
+
   (time (f9 ["411"  "71170"]))
   (time (f9 ["411"  "711700"]))
   (time (f9 ["411"  "7117000"]))
