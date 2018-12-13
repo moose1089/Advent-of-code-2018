@@ -38,8 +38,23 @@
                            l)))]
     (println (apply * (vals f-2-3)))))
 
+(defn word-dist
+  [a b]
+  (count (filter #(apply not= (take 2 %)) (map #(vector %1 %2) a b))))
+
 (defn f2-2 [args]
-)
+  (let [l (clojure.string/split-lines (slurp *in*))
+        wcd (word-dist (first l) (second l))
+        distances (for [a l
+                        b l]
+                    (when (not= a b)
+                      [(word-dist a b) a b]))
+        close (filter #(= (first %) 1) distances)
+        first-close-items (rest (first close))]
+    (println "close item " close)
+    (println "close item " (clojure.string/join (map first
+                                                     (filter #(apply = (take 2 %)) (apply map #(vector %1 %2) first-close-items)))))))
+
 
 ;; Day 9
 
