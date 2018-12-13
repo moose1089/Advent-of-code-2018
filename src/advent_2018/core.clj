@@ -1,7 +1,8 @@
 (ns advent-2018.core
   (:gen-class))
 
-(defn f1 [args]
+; day 1
+(defn f1-1 [args]
   (let [l (clojure.string/split-lines (slurp *in*))]
     (println (reduce + (map #(Integer/parseInt %) l)))
     ))
@@ -12,7 +13,7 @@
   ([c s] (lazy-seq
           (cons c (seq-f2 (+ c (first s)) (rest s))))))
 
-(defn f2 [args]
+(defn f1-2 [args]
   (let [l  (clojure.string/split-lines (slurp *in*))
         fd (map #(Integer/parseInt %) l)
         f  (seq-f2 (cycle fd))]
@@ -22,6 +23,23 @@
       (if (contains? seen-set current-freq)
         (println current-freq)
         (recur (conj seen-set current-freq) (first (rest frequencies)) (rest frequencies))))))
+
+;; day 2
+(defn f2-1 [args]
+  (let [l (clojure.string/split-lines (slurp *in*))
+        f-2-3 (frequencies (flatten
+                      (map (fn [r] (->> r
+                                       frequencies
+                                       vals
+                                       distinct
+                                       (filter #(<= 2  % 3))
+                                       ;;                              ((juxt #(first (not-empty (filter #{2} %))) #(first (not-empty (filter #{3} %)))))
+                                       ))
+                           l)))]
+    (println (apply * (vals f-2-3)))))
+
+(defn f2-2 [args]
+)
 
 ;; Day 9
 
@@ -75,16 +93,11 @@
 (defn -main
   "I don't do a whole lot ... yet."
   [h & args]
-
-
-
-  (time (f9 ["411"  "71170"]))
-  (time (f9 ["411"  "711700"]))
-  (time (f9 ["411"  "7117000"]))
-
-  #_(case (BigDecimal. h)
-    1.1M (f1 args)
-    1.2M (f2 args)
+  (case (BigDecimal. h)
+    1.1M (f1-1 args)
+    1.2M (f1-2 args)
+    2.1M (f2-1 args)
+    2.2M (f2-2 args)
     9.1M (f9 args)
     )
   )
