@@ -57,14 +57,63 @@
 
 ;; Day 3
 
+(defn match-to-claim
+  [matches]
+  {:id     (nth matches 0)
+   :x      (nth matches 1)
+   :y      (nth matches 2)
+   :xlimit (+  (nth matches 1) (nth matches 3))
+   :ylimit (+  (nth matches 2) (nth matches 4))
+   :xsize  (nth matches 3)
+   :ysize  (nth matches 4)})
+
+(defn contained [x y claim]
+  (and (< (+ -1 (:x claim)) x (+ 2 (:xlimit claim)))
+       (< (+ -1 (:y claim)) y (+ 2 (:ylimit claim)))))
+
+(defn corners [c]
+  [[(inc (:x c)) (inc (:y c))]
+   [(inc (:x c)) (:ylimit c)]
+   [(:xlimit c) (:ylimit c)]
+   [(:xlimit c) (inc (:y c))]]
+  )
+
+(defn overlapsub [a b]
+  (let [four-corners (corners a)]
+;    (println "corners" four-corners)
+    (some true? (map #(contained (first %) (second %) b) four-corners))))
+
+(defn overlap [a b]
+  (or (overlapsub a b) (overlapsub b a)))
+
+(defn f3-1 [args]
+  (let [l      (clojure.string/split-lines (slurp *in*))
+        claims (map (fn [x] (match-to-claim (map #(Integer/parseInt %) (rest (re-matches #"#(.*) @ ([0-9]+),([0-9]+): ([0-9]+)x([0-9]+)" x))))) l)
+        maxx   (reduce max 0 (map :xlimit claims))
+        maxy   (reduce max 0 (map :ylimit claims))]
+    (println "maxes " maxx maxy)
+    (let [r (count (filter true?
+                           (for [x (range (inc maxx))
+                                 y (range (inc maxy))]
+                             (do
+                               (let [numclaims (count (filter true? (for [c claims] (contained x y c))))]
+                                 ;;(println "checking " x y "= " numclaims)
+                                 (< 1 numclaims))))))]
+      (println r "inches claimed by more than 1 elf"))))
 
 
-
-
-
-
-
-
+(defn f3-2 [args]
+  (let [l      (clojure.string/split-lines (slurp *in*))
+        claims (map (fn [x] (match-to-claim (map #(Integer/parseInt %) (rest (re-matches #"#(.*) @ ([0-9]+),([0-9]+): ([0-9]+)x([0-9]+)" x))))) l)]
+    (let [r (filter some? (for [c1 claims]
+                            (do
+                              (let [overlaps
+                                    (count (filter true? (for [c2 claims]
+                                                           (when (not= c1 c2)
+                                                             (overlap c1 c2)))))]
+                                (when (= 0 overlaps) c1)))))]
+      (println "non overlapping claims" (count r))
+      (println "non overlapping claims" r))))
 
 ;; Day 9
 
