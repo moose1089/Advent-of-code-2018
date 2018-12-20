@@ -55,6 +55,16 @@
     (println "close item " (clojure.string/join (map first
                                                      (filter #(apply = (take 2 %)) (apply map #(vector %1 %2) first-close-items)))))))
 
+;; Day 3
+
+
+
+
+
+
+
+
+
 
 ;; Day 9
 
@@ -113,6 +123,8 @@
     1.2M (f1-2 args)
     2.1M (f2-1 args)
     2.2M (f2-2 args)
+    3.1M (f3-1 args)
+    3.2M (f3-2 args)
     9.1M (f9 args)
     )
   )
